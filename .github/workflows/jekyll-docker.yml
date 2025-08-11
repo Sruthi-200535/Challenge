@@ -1,0 +1,43 @@
+name: Jekyll site CI with Success Poster
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build the site in the jekyll/builder container
+      run: |
+        docker run \
+        -v ${{ github.workspace }}:/srv/jekyll \
+        -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
+        jekyll/builder:latest /bin/bash -c \
+        "chmod -R 777 /srv/jekyll && jekyll build --future"
+
+    - name: Create success poster file
+      run: |
+        echo "## ✅ Build Successful!" > build-status.md
+        echo "" >> build-status.md
+        echo "**Repository:** $GITHUB_REPOSITORY" >> build-status.md
+        echo "**Branch:** $GITHUB_REF_NAME" >> build-status.md
+        echo "**Date:** $(date)" >> build-status.md
+        echo "" >> build-status.md
+        echo "🚀 Your Jekyll site was built successfully and is ready in the \`_site\` folder!" >> build-status.md
+
+    - name: Commit and push poster
+      run: |
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        git add build-status.md
+        git commit -m "Add build success poster [skip ci]" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
