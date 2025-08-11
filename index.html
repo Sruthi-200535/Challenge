@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🌟 Digital Vision Board 🌟</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #f9c1b1, #fbc2eb);
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        padding: 20px;
+    }
+    input, button {
+        padding: 8px;
+        margin: 5px;
+    }
+    #visionBoard {
+        margin: 20px auto;
+        width: 90%;
+        min-height: 500px;
+        border: 2px dashed #ccc;
+        background: #fff;
+        position: relative;
+        padding: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .board-item {
+        position: relative;
+        max-width: 200px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .board-item img {
+        width: 100%;
+        display: block;
+    }
+    .quote {
+        padding: 10px;
+        background: #fef4e8;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h1>🌟 Digital Vision Board 🌟</h1>
+
+<input type="text" id="imageURL" placeholder="Enter image URL">
+<button id="addImage">Add Image</button>
+
+<input type="text" id="quoteText" placeholder="Enter a quote">
+<button id="addQuote">Add Quote</button>
+
+<button id="clearBoard">Clear Board</button>
+<button id="saveBoard">Save Board</button>
+
+<div id="visionBoard"></div>
+
+<!-- html2canvas Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+    const visionBoard = document.getElementById("visionBoard");
+
+    // Add image to board
+    document.getElementById("addImage").addEventListener("click", () => {
+        const url = document.getElementById("imageURL").value;
+        if (url) {
+            const item = document.createElement("div");
+            item.classList.add("board-item");
+            const img = document.createElement("img");
+            img.src = url;
+            item.appendChild(img);
+            visionBoard.appendChild(item);
+            document.getElementById("imageURL").value = "";
+        }
+    });
+
+    // Add quote to board
+    document.getElementById("addQuote").addEventListener("click", () => {
+        const text = document.getElementById("quoteText").value;
+        if (text) {
+            const item = document.createElement("div");
+            item.classList.add("board-item", "quote");
+            item.innerText = text;
+            visionBoard.appendChild(item);
+            document.getElementById("quoteText").value = "";
+        }
+    });
+
+    // Clear board
+    document.getElementById("clearBoard").addEventListener("click", () => {
+        visionBoard.innerHTML = "";
+    });
+
+    // Save board as image
+    document.getElementById("saveBoard").addEventListener("click", () => {
+        html2canvas(visionBoard).then(canvas => {
+            const link = document.createElement("a");
+            link.download = "vision_board.png";
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    });
+</script>
+
+</body>
+</html>
